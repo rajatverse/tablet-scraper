@@ -36,9 +36,13 @@ def update_theme_file(session, filename, new_content):
         "newcontent": new_content
     }
 
-    save_resp = session.post(f"{WP_SITE_URL}/wp-admin/theme-editor.php", data=post_data)
+    headers = {
+        "Referer": url,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    }
+    save_resp = session.post(f"{WP_SITE_URL}/wp-admin/theme-editor.php", data=post_data, headers=headers)
     if save_resp.status_code != 200:
-        raise RuntimeError(f"Failed to save {filename}: status {save_resp.status_code}")
+        raise RuntimeError(f"Failed to save {filename}: status {save_resp.status_code}, body: {save_resp.text[:300]}")
     return True
 
 
