@@ -1,0 +1,84 @@
+{
+  "rss_feeds": [
+    {
+      "name": "Google News - Tablet Launch India",
+      "url": "https://news.google.com/rss/search?q=tablet+launch+India+when:3d&hl=en-IN&gl=IN&ceid=IN:en",
+      "type": "google_news_rss",
+      "category": "breaking_news",
+      "priority": 1,
+      "enabled": true
+    },
+    {
+      "name": "Google News - Tablet Price India",
+      "url": "https://news.google.com/rss/search?q=tablet+price+India+when:3d&hl=en-IN&gl=IN&ceid=IN:en",
+      "type": "google_news_rss",
+      "category": "price_availability",
+      "priority": 1,
+      "enabled": true
+    },
+    {
+      "name": "Google News - Android Tablet India",
+      "url": "https://news.google.com/rss/search?q=new+Android+tablet+India+when:3d&hl=en-IN&gl=IN&ceid=IN:en",
+      "type": "google_news_rss",
+      "category": "breaking_news",
+      "priority": 1,
+      "enabled": true
+    },
+    {
+      "name": "Google News - iPad India",
+      "url": "https://news.google.com/rss/search?q=iPad+India+when:3d&hl=en-IN&gl=IN&ceid=IN:en",
+      "type": "google_news_rss",
+      "category": "apple_ecosystem",
+      "priority": 1,
+      "enabled": true
+    },
+    {
+      "name": "Google News - Samsung Galaxy Tab India",
+      "url": "https://news.google.com/rss/search?q=Samsung+Galaxy+Tab+India+when:3d&hl=en-IN&gl=IN&ceid=IN:en",
+      "type": "google_news_rss",
+      "category": "samsung_ecosystem",
+      "priority": 1,
+      "enabled": true
+    },
+    {
+      "name": "Google News - Tablet BIS Certification",
+      "url": "https://news.google.com/rss/search?q=tablet+BIS+certification+when:7d&hl=en-IN&gl=IN&ceid=IN:en",
+      "type": "google_news_rss",
+      "category": "certification_leak",
+      "priority": 2,
+      "enabled": true
+    },
+    {
+      "name": "Gadgets 360 - News Feed",
+      "url": "https://feeds.feedburner.com/gadgets360-latest",
+      "type": "publication_rss",
+      "category": "tech_media",
+      "priority": 1,
+      "enabled": true
+    },
+    {
+      "name": "Gizmochina - Tech Feed",
+      "url": "https://www.gizmochina.com/feed/",
+      "type": "publication_rss",
+      "category": "tech_media",
+      "priority": 2,
+      "enabled": true
+    },
+    {
+      "name": "FoneArena - India Feed",
+      "url": "https://www.fonearena.com/blog/feed",
+      "type": "publication_rss",
+      "category": "tech_media",
+      "priority": 2,
+      "enabled": true
+    },
+    {
+      "name": "GSMArena - News Feed",
+      "url": "https://www.gsmarena.com/rss-news-reviews.php3",
+      "type": "publication_rss",
+      "category": "tech_media",
+      "priority": 3,
+      "enabled": true
+    }
+  ]
+}

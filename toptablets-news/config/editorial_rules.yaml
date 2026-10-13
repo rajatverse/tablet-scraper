@@ -1,0 +1,38 @@
+editorial_rules:
+  site_name: "TopTablets.in"
+  market: "India"
+  currency: "INR (₹)"
+
+  word_count_targets:
+    product_launch:
+      min: 500
+      max: 950
+    price_announcement:
+      min: 450
+      max: 800
+    software_update:
+      min: 400
+      max: 750
+    certification_leak:
+      min: 350
+      max: 650
+    buying_guide:
+      min: 1200
+      max: 2000
+
+  fact_checking_rules:
+    - "Only use supplied, verified facts for factual claims (price, chipset, display, battery, launch date)."
+    - "Never invent prices, specs, release dates, or benchmark scores."
+    - "Clearly distinguish official announcements from rumours and unconfirmed leaks."
+    - "If India launch date or pricing is unknown or unconfirmed, explicitly state that."
+    - "Cross-check important specs against verified retailer or official brand listings."
+    - "Do not claim first-hand product testing or hands-on experience."
+    - "Do not generate boilerplate FAQs simply to inflate word count."
+
+  quality_checks:
+    min_verified_facts: 2
+    require_india_price_or_unconfirmed_note: true
+    require_meta_description: true
+    require_seo_title: true
+    max_title_length: 65
+    max_meta_description_length: 160

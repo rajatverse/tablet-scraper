@@ -1,0 +1,48 @@
+# Environment & Secret files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Databases & local binary storage
+*.db
+*.sqlite
+*.sqlite3
+data/*.db
+data/tablets.db
+tablets.db
+toptablets-news/data/*.db
+toptablets-news/data/news.db
+toptablets-news/data/cache/
+toptablets-news/data/logs/
+
+# Scraped raw HTML and JSON dumps
+data/raw_html/
+data/preview_tablet.html
+
+# Scratch & debugging scripts
+scratch/
+
+# IDE & OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Virtual Environments
+venv/
+.venv/
+ENV/
+env/

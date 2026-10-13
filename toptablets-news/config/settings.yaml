@@ -1,0 +1,33 @@
+database:
+  path: "data/news.db"
+
+logging:
+  file: "data/logs/pipeline.log"
+  level: "INFO"
+
+scoring:
+  weights:
+    freshness: 25
+    india_relevance: 25
+    significance: 20
+    search_demand: 15
+    source_reliability: 15
+  thresholds:
+    high_priority: 75
+    worth_researching: 55
+    backlog: 40
+
+wordpress:
+  site_url: "https://toptablets.in"
+  default_status: "draft"
+  news_category_id: 1
+  comparisons_category_id: 14
+  author_id: 1
+
+llm:
+  default_provider: "ollama"
+  ollama:
+    host: "http://localhost:11434"
+    model: "gemma2:2b"
+    timeout_seconds: 60
+  fallback_provider: "none"
