@@ -80,20 +80,38 @@ def fetch_and_save_html(url: str, output_dir: Path = RAW_HTML_DIR) -> Tuple[str,
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     html_content = ""
-    final_url = url
+    fetch_url = url
+
+    # Normalize Amazon shortlinks and URLs to clean /dp/{asin}
+    try:
+        import requests as std_requests
+        # Check if Amazon shortlink or contains amazon
+        if "link.amazon" in url or "amzn.to" in url or "amzn.in" in url or "amazon.in" in url:
+            head_res = std_requests.get(url, allow_redirects=True, timeout=12)
+            target = head_res.url
+            asin_match = re.search(r"/(?:dp|product|gp/product)/([A-Z0-9]{10})", target, re.IGNORECASE)
+            if asin_match:
+                fetch_url = f"https://www.amazon.in/dp/{asin_match.group(1).upper()}"
+            else:
+                fetch_url = target
+    except Exception:
+        fetch_url = url
+
+    final_url = fetch_url
 
     # Method 1: curl_cffi with Chrome impersonation (bypasses bot checks without clashing headers)
     try:
         from curl_cffi import requests as curl_requests
         resp = curl_requests.get(
-            url,
+            fetch_url,
+            headers={"sec-ch-ua-mobile": "?0", "Accept-Language": "en-IN,en;q=0.9"},
             impersonate="chrome124",
             timeout=25,
             allow_redirects=True,
         )
         if resp.status_code == 200:
             html_content = resp.text
-            final_url = str(resp.url) if resp.url else url
+            final_url = str(resp.url) if resp.url else fetch_url
         else:
             console.print(f"[yellow]curl_cffi returned HTTP {resp.status_code}, trying requests fallback...[/yellow]")
     except Exception as e:

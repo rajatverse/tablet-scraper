@@ -45,6 +45,7 @@ CHIPSET_BENCHMARKS: Dict[str, Dict[str, Any]] = {
     "MediaTek Dimensity 9300+": {"gb6_single": 2180, "gb6_multi": 7100, "antutu": 2050000, "process": "4nm TSMC"},
     "Snapdragon 8s Gen 4": {"gb6_single": 2150, "gb6_multi": 6800, "antutu": 1850000, "process": "4nm TSMC"},
     "8s Gen 4":            {"gb6_single": 2150, "gb6_multi": 6800, "antutu": 1850000, "process": "4nm TSMC"},
+    "Dimensity 6300":           {"gb6_single": 750,  "gb6_multi": 2000, "antutu": 420000,  "process": "6nm TSMC"},
     "Exynos 1380":              {"gb6_single": 1100, "gb6_multi": 3250, "antutu": 620000, "process": "5nm Samsung"},
 }
 
@@ -410,6 +411,94 @@ TABLET_AUGMENTED_SPECS: Dict[str, Dict[str, Any]] = {
             },
         ],
     },
+    "Lenovo Idea Tab": {
+        "colors": [("Luna Grey", "#707275")],
+        "storage_options": ["128 GB"],
+        "storage_badges": [("128 GB", "(Base)")],
+        "connectivity_options": ["Wi-Fi"],
+        "connectivity_badges": [
+            "Wi-Fi (802.11ac Dual Band)",
+        ],
+        "key_decision_specs": {
+            "chipset": "MediaTek Dimensity 6300 (6nm Octa-core)",
+            "display": "11\" 2.5K IPS LCD (2560 × 1600, 90Hz, 400 nits)",
+            "ram_storage": "6 GB RAM • 128 GB Storage (Expandable to 2TB)",
+            "form_factor": "465g weight • 7.1mm slim chassis",
+            "stylus": "Bundled Lenovo Tab Pen included in box",
+        },
+        "display": {
+            "Screen-to-Body Ratio": "85.0%",
+            "Peak Brightness": "400 nits",
+            "Color Gamut": "72% NTSC Color",
+            "Refresh Rate": "90 Hz",
+            "ProMotion 120Hz": False,
+            "True Tone": False,
+            "Anti-Reflective Coating": False,
+            "Fully Laminated": True,
+        },
+        "stylus": {
+            "Stylus Support": "Bundled Lenovo Tab Pen in the Box",
+            "Stylus Latency": "~25 ms",
+            "Palm Rejection": True,
+            "Hover Detection": True,
+            "Barrel Roll": False,
+            "Haptic Squeeze": False,
+            "Air Actions": False,
+        },
+        "cameras": {
+            "Rear Camera": "8 MP Auto-Focus",
+            "Front Camera": "5 MP Fixed-Focus",
+            "Video Recording": "1080p @ 30 fps",
+            "Center Stage": False,
+        },
+        "battery_charging": {
+            "Charging Wattage": "20W Fast Charging",
+            "Charge Time (0→100%)": "~2 hours 10 mins",
+            "Reverse Wired Charging": False,
+        },
+        "connectivity_extra": {
+            "Wi-Fi Standard": "Wi-Fi 5 (802.11ac)",
+            "Bluetooth": "5.2",
+            "USB": "USB-C 2.0",
+            "DisplayPort via USB-C": False,
+            "3.5mm Headphone Jack": True,
+            "MicroSD Expansion": True,
+        },
+        "software_security": {
+            "Operating System": "Android 15 (Lenovo ZUI)",
+            "Biometric": "Face Unlock",
+            "Face ID": False,
+            "Security Updates": "3 years guaranteed",
+        },
+        "sensors": {
+            "Accelerometer": True,
+            "Gyroscope": True,
+            "Ambient Light": True,
+            "Hall Sensor": True,
+            "GPS": False,
+        },
+        "build": {
+            "Weight": "465 g",
+            "Thickness": "7.1 mm",
+            "Material": "Dual-tone Metal & Polycarbonate",
+            "IP Rating": "IP52 (Dust & Splash Resistant)",
+            "Landscape Stereo Speakers": True,
+        },
+        "rivals": [
+            {
+                "name": "Redmi Pad SE",
+                "img": "https://toptablets.in/wp-content/uploads/2026/10/redmi-pad-se.jpg",
+                "desc": "Bundled Stylus Pen vs Budget Competitor",
+                "diffs": ["Bundled Pen in Box", "2.5K vs FHD+ Screen", "Dimensity 6300 SoC", "Expandable up to 2TB"],
+            },
+            {
+                "name": "Apple iPad 10th Gen",
+                "img": "https://toptablets.in/wp-content/uploads/2026/10/ipad-10th-gen.jpg",
+                "desc": "Sub-₹20K Value King vs Everyday iOS Benchmark",
+                "diffs": ["₹18.9K vs ₹31.9K Price", "Pen Included vs Extra ₹10K", "MicroSD Slot Support", "90Hz vs 60Hz Screen"],
+            },
+        ],
+    },
 }
 
 
@@ -609,6 +698,20 @@ def render_verdict_and_pros_cons(tablet: Dict[str, Any]) -> str:
         summary = "An aggressively priced Android powerhouse packing flagship Snapdragon 8s Gen 4 performance, a razor-sharp 3.2K 144Hz screen, and huge 9200mAh stamina in an ultra-slim aluminum shell."
         audience = "Gamers, students, and entertainment enthusiasts seeking flagship-level speed, high-refresh visuals, and long battery life without flagship four-figure prices."
         buyers_take = "Delivers exceptional hardware value in the premium mid-tier segment, pairing a top-tier 144Hz screen with flagship Qualcomm silicon."
+    elif "idea tab" in model.lower() or "lenovo" in model.lower():
+        pros = [
+            "Incredible value with bundled Lenovo Tab Pen included in the box",
+            "Crisp 11-inch 2.5K 90Hz IPS display with quad Dolby Atmos speakers",
+            "Massive storage expansion up to 2TB via dedicated microSD card slot",
+            "Dependable 7040mAh battery stamina for school, streaming, and daily tasks",
+        ]
+        cons = [
+            "20W charging takes over 2 hours for a full cycle",
+            "Basic 5MP front camera best suited for casual calls",
+        ]
+        summary = "An outstanding sub-₹20,000 package that includes an active stylus in the box, a sharp 2.5K 90Hz screen, and quad speakers for students and budget-conscious creators."
+        audience = "Students, digital note-takers, and media consumers looking for an affordable all-in-one tablet that doesn't charge extra for a pen."
+        buyers_take = "One of the best budget tablets on the market, offering unbeatable out-of-the-box utility with bundled stylus and 2.5K visuals."
     else:
         pros = ["Excellent value-for-money ratio", "Crisp high-resolution display", "All-day battery stamina", "Clean OS experience"]
         cons = ["Base storage fills quickly", "Fast charger sold separately"]
