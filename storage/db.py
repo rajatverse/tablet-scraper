@@ -81,6 +81,17 @@ class Database:
                 FOREIGN KEY (flipkart_listing_id) REFERENCES listings(id)
             )
             """)
+
+            # Ensure last_price_checked column exists in both tables
+            try:
+                cursor.execute("ALTER TABLE listings ADD COLUMN last_price_checked TIMESTAMP")
+            except Exception:
+                pass
+            try:
+                cursor.execute("ALTER TABLE tablets ADD COLUMN last_price_checked TIMESTAMP")
+            except Exception:
+                pass
+
             conn.commit()
 
     def save_raw_page(self, platform: str, raw_html: str, product_id: Optional[str] = None, url: Optional[str] = None, file_path: Optional[str] = None) -> int:
@@ -225,3 +236,100 @@ class Database:
             WHERE id = ?
             """, (wc_product_id, status, tablet_id))
             conn.commit()
+
+    def get_listing_by_product_id(self, platform: str, product_id: str) -> Optional[Dict[str, Any]]:
+        """Find an existing store listing by platform and product ID (ASIN / FSN)."""
+        if not platform or not product_id:
+            return None
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM listings WHERE platform = ? AND product_id = ?", (platform, product_id))
+            row = cursor.fetchone()
+            return dict(row) if row else None
+
+    def get_tablet_by_match_key(self, match_key: str) -> Optional[Dict[str, Any]]:
+        """Find an existing matched tablet by its normalized match key."""
+        if not match_key:
+            return None
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM tablets WHERE match_key = ?", (match_key,))
+            row = cursor.fetchone()
+            return dict(row) if row else None
+
+    def get_tablet_by_listing_id(self, listing_id: int) -> Optional[Dict[str, Any]]:
+        """Find the combined tablet associated with an Amazon or Flipkart listing ID."""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT * FROM tablets WHERE amazon_listing_id = ? OR flipkart_listing_id = ?",
+                (listing_id, listing_id)
+            )
+            row = cursor.fetchone()
+            return dict(row) if row else None
+
+    def get_listings_due_for_price_check(self, interval_days: float = 3.0) -> List[Dict[str, Any]]:
+        """
+        Fetch listings that need a price check.
+        A listing is due if:
+        1. It has never had a price check (last_price_checked IS NULL), OR
+        2. More than `interval_days` (default 3.0) have elapsed since last_price_checked.
+        """
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+            SELECT * FROM listings
+            WHERE url IS NOT NULL AND url != ''
+              AND (
+                last_price_checked IS NULL
+                OR (julianday('now') - julianday(last_price_checked)) >= ?
+              )
+            ORDER BY COALESCE(last_price_checked, '1970-01-01') ASC
+            """, (interval_days,))
+            rows = cursor.fetchall()
+            return [dict(r) for r in rows]
+
+    def update_listing_price(self, listing_id: int, new_price: Optional[float], new_mrp: Optional[float]) -> bool:
+        """Update price and MRP for a listing, updating data_json and timestamps."""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT data_json, match_key FROM listings WHERE id = ?", (listing_id,))
+            row = cursor.fetchone()
+            if not row:
+                return False
+
+            match_key = row["match_key"]
+            try:
+                data = json.loads(row["data_json"]) if row["data_json"] else {}
+            except Exception:
+                data = {}
+
+            data["price_inr"] = new_price
+            if new_mrp is not None:
+                data["mrp_inr"] = new_mrp
+
+            new_json = json.dumps(data, ensure_ascii=False)
+
+            cursor.execute("""
+            UPDATE listings
+            SET price = ?, mrp = ?, data_json = ?, updated_at = CURRENT_TIMESTAMP, last_price_checked = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """, (new_price, new_mrp, new_json, listing_id))
+            conn.commit()
+
+        # Re-sync tablet comparison pricing
+        if match_key:
+            self.sync_tablet_match(match_key)
+        return True
+
+    def mark_listing_price_checked(self, listing_id: int):
+        """Mark a listing as checked without modifying prices (used when price is unchanged)."""
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+            UPDATE listings
+            SET last_price_checked = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """, (listing_id,))
+            conn.commit()
+

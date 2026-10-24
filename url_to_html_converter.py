@@ -149,19 +149,83 @@ def fetch_and_save_html(url: str, output_dir: Path = RAW_HTML_DIR) -> Tuple[str,
     return html_content, target_path, platform, final_url
 
 
-def convert_url(url: str, save_json: bool = True, output_dir: Path = RAW_HTML_DIR) -> Optional[Dict[str, Any]]:
+def check_already_added(url: str) -> Optional[Dict[str, Any]]:
+    """Check if the product URL is already scraped and present in the database."""
+    target_url = url
+    if "link.amazon" in url or "amzn.to" in url or "amzn.in" in url:
+        try:
+            import requests as std_requests
+            r = std_requests.get(url, allow_redirects=True, timeout=8)
+            if r.url:
+                target_url = r.url
+        except Exception:
+            pass
+
+    platform = detect_platform("", target_url)
+    product_id = extract_product_id(target_url, platform)
+    if not product_id or product_id == "product":
+        return None
+
+    existing = db.get_listing_by_product_id(platform, product_id)
+    if existing:
+        tablet = db.get_tablet_by_listing_id(existing["id"])
+        return {
+            "listing": existing,
+            "tablet": tablet,
+            "platform": platform,
+            "product_id": product_id,
+        }
+    return None
+
+
+
+def convert_url(url: str, force: bool = False, save_json: bool = True, output_dir: Path = RAW_HTML_DIR) -> Optional[Dict[str, Any]]:
     """
-    Complete pipeline:
-    1. Fetch live page URL
-    2. Save raw HTML file to disk
-    3. Parse HTML
-    4. Store in SQLite database
-    5. Optionally save JSON dump
+    Complete pipeline with duplicate check:
+    1. Check if product is already in database (skip download if exists unless force=True)
+    2. Fetch live page URL
+    3. Save raw HTML file to disk
+    4. Parse HTML
+    5. Store in SQLite database
+    6. Optionally save JSON dump
     """
     url = url.strip()
     if not url or not url.startswith("http"):
         console.print(f"[red]Invalid URL:[/red] {url}")
         return None
+
+    # Step 0: Check if product was already added
+    if not force:
+        check = check_already_added(url)
+        if check:
+            existing = check["listing"]
+            tablet = check["tablet"]
+            platform = check["platform"]
+            product_id = check["product_id"]
+
+            info_table = Table(show_header=False, box=None)
+            info_table.add_column("Key", style="bold yellow")
+            info_table.add_column("Value")
+            info_table.add_row("Status", "[bold yellow]Already Exists in Database (Skipped)[/bold yellow]")
+            info_table.add_row("Platform", platform.capitalize())
+            info_table.add_row("Product ID", product_id)
+            info_table.add_row("Title", str(existing.get("title") or "Unknown"))
+            info_table.add_row("Price", f"₹{int(existing['price']):,}" if existing.get("price") else "N/A")
+            info_table.add_row("Listing ID", f"#{existing['id']} (Updated: {existing.get('updated_at')})")
+            
+            if tablet:
+                wc_status = tablet.get("wc_sync_status", "not_synced")
+                wc_id = tablet.get("wc_product_id")
+                status_color = "green" if wc_status == "synced" else "dim"
+                info_table.add_row("WooCommerce", f"[{status_color}]{wc_status.capitalize()}[/{status_color}] (Product ID: #{wc_id or 'None'})")
+
+            console.print(Panel(info_table, title="ℹ️ Product Already Added", border_style="yellow"))
+            console.print("  [dim]Skipping download to avoid duplicate loading. (Use [bold cyan]--force[/bold cyan] to re-fetch and update).[/dim]\n")
+            
+            try:
+                return json.loads(existing.get("data_json") or "{}")
+            except Exception:
+                return existing
 
     console.print(f"\n[cyan]🌐 Fetching URL:[/cyan] [link={url}]{url}[/link]")
 
@@ -211,12 +275,14 @@ def convert_url(url: str, save_json: bool = True, output_dir: Path = RAW_HTML_DI
 def main():
     parser = argparse.ArgumentParser(description="Convert Amazon & Flipkart Product URLs to Saved HTML and Parsed Data")
     parser.add_argument("source", nargs="?", help="Product URL or path to text file containing URLs")
+    parser.add_argument("--force", "-f", action="store_true", help="Force re-fetch and update even if product already exists in database")
     parser.add_argument("--no-json", action="store_true", help="Do not save parsed .json file alongside .html")
     parser.add_argument("--output-dir", default=str(RAW_HTML_DIR), help="Directory to save raw HTML files")
 
     args = parser.parse_args()
     output_dir = Path(args.output_dir)
     save_json = not args.no_json
+    force = args.force
 
     urls = []
     if args.source:
@@ -244,13 +310,14 @@ def main():
     console.print(f"\n[bold]Starting conversion for {len(urls)} URL(s)...[/bold]")
     successful = 0
     for u in urls:
-        res = convert_url(u, save_json=save_json, output_dir=output_dir)
+        res = convert_url(u, force=force, save_json=save_json, output_dir=output_dir)
         if res:
             successful += 1
 
-    console.print(f"\n[bold green]✓ Conversion completed: {successful}/{len(urls)} succeeded.[/bold green]")
+    console.print(f"\n[bold green]✓ Conversion completed: {successful}/{len(urls)} processed.[/bold green]")
     console.print("View all parsed products with: [bold cyan]python cli.py list[/bold cyan]")
 
 
 if __name__ == "__main__":
     main()
+

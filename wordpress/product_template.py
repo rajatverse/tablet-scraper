@@ -4,7 +4,7 @@ product_template.py - TopTablets Spec-Hub Layout for WooCommerce Tablet Products
 Generates a modern, data-rich tablet specification portal experience:
  - Variant Selector (Color / Storage / Connectivity chips)
  - Live Affiliate Price Matrix with retailer badges, bank offers & price alerts
- - Editor's Verdict & Pros/Cons (2-column grid with benchmark meters)
+ - Editor's Verdict & Pros/Cons (2-column grid)
  - Hardware Bento 4×2 Matrix
  - Practical Experience Highlights
  - Enhanced 8-Category Searchable Specification Database with visual pills
@@ -32,21 +32,33 @@ IGNORE_SPEC_KEYS = {
     "net quantity", "country of origin", "item weight", "package dimensions",
 }
 
-# Known chipset benchmark scores (expandable)
+# Known chipset architecture and fabrication process nodes
 CHIPSET_BENCHMARKS: Dict[str, Dict[str, Any]] = {
-    "Apple A17 Pro":       {"gb6_single": 2908, "gb6_multi": 7379, "antutu": 1650000, "process": "3nm TSMC"},
-    "Apple M2":            {"gb6_single": 2592, "gb6_multi": 9747, "antutu": 1880000, "process": "5nm TSMC"},
-    "Apple M4":            {"gb6_single": 3810, "gb6_multi": 14700, "antutu": 2250000, "process": "3nm TSMC"},
-    "Apple A16 Bionic":    {"gb6_single": 2530, "gb6_multi": 6400, "antutu": 1320000, "process": "4nm TSMC"},
-    "Apple A14 Bionic":    {"gb6_single": 2120, "gb6_multi": 4980, "antutu": 1150000, "process": "5nm TSMC"},
-    "Snapdragon 8 Gen 3":  {"gb6_single": 2250, "gb6_multi": 7150, "antutu": 2100000, "process": "4nm TSMC"},
-    "Snapdragon 8s Gen 3": {"gb6_single": 1870, "gb6_multi": 5000, "antutu": 1480000, "process": "4nm TSMC"},
-    "Dimensity 9300+":          {"gb6_single": 2180, "gb6_multi": 7100, "antutu": 2050000, "process": "4nm TSMC"},
-    "MediaTek Dimensity 9300+": {"gb6_single": 2180, "gb6_multi": 7100, "antutu": 2050000, "process": "4nm TSMC"},
-    "Snapdragon 8s Gen 4": {"gb6_single": 2150, "gb6_multi": 6800, "antutu": 1850000, "process": "4nm TSMC"},
-    "8s Gen 4":            {"gb6_single": 2150, "gb6_multi": 6800, "antutu": 1850000, "process": "4nm TSMC"},
-    "Dimensity 6300":           {"gb6_single": 750,  "gb6_multi": 2000, "antutu": 420000,  "process": "6nm TSMC"},
-    "Exynos 1380":              {"gb6_single": 1100, "gb6_multi": 3250, "antutu": 620000, "process": "5nm Samsung"},
+    "Apple A17 Pro":                 {"process": "3nm TSMC"},
+    "Apple M2":                      {"process": "5nm TSMC"},
+    "Apple M4":                      {"process": "3nm TSMC"},
+    "Apple A16 Bionic":              {"process": "4nm TSMC"},
+    "Snapdragon 8 Elite":            {"process": "3nm TSMC (N3E)"},
+    "Snapdragon 8 Elite gen 5":      {"process": "3nm TSMC (N3E)"},
+    "Snapdragon 8 Elite Gen 5":      {"process": "3nm TSMC (N3E)"},
+    "Snapdragon 8 Gen 3":            {"process": "4nm TSMC"},
+    "Snapdragon 8s Gen 3":           {"process": "4nm TSMC"},
+    "Dimensity 9300+":               {"process": "4nm TSMC"},
+    "Dimensity 7300-Ultra":          {"process": "4nm TSMC"},
+    "MediaTek Dimensity 7300-Ultra": {"process": "4nm TSMC"},
+    "Dimensity 7300":                {"process": "4nm TSMC"},
+    "MediaTek Helio G100":           {"process": "6nm TSMC"},
+    "Helio G100":                    {"process": "6nm TSMC"},
+    "MTK G100":                      {"process": "6nm TSMC"},
+    "Dimensity 6300":                {"process": "6nm TSMC"},
+    "MediaTek Dimensity 6300":       {"process": "6nm TSMC"},
+    "Exynos 1380":                   {"process": "5nm Samsung"},
+    "Snapdragon 7s Gen 2":           {"process": "4nm Samsung"},
+    "Qualcomm Snapdragon 7s Gen 2":  {"process": "4nm Samsung"},
+    "Snapdragon SM6475Q":            {"process": "4nm Samsung"},
+    "SM6475Q":                       {"process": "4nm Samsung"},
+    "MT8755":                        {"process": "6nm TSMC"},
+    "Mediatek MT8755":               {"process": "6nm TSMC"},
 }
 
 # Augmented specs for known tablet models (data beyond what Amazon scrapes)
@@ -499,6 +511,479 @@ TABLET_AUGMENTED_SPECS: Dict[str, Dict[str, Any]] = {
             },
         ],
     },
+    "OnePlus Pad Lite": {
+        "colors": [("Aero Blue", "#4d82b8")],
+        "storage_options": ["128 GB"],
+        "storage_badges": [("128 GB", "(Base)")],
+        "connectivity_options": ["Wi-Fi + LTE"],
+        "connectivity_badges": [
+            "Wi-Fi + 4G LTE Cellular",
+        ],
+        "key_decision_specs": {
+            "chipset": "MediaTek Helio G100 (6nm Octa-core up to 2.2 GHz, Mali-G57 MC2)",
+            "display": "11.0\" FHD+ LCD (1920 × 1200, 90Hz, 500 nits, 16:10)",
+            "ram_storage": "8 GB RAM • 128 GB ROM",
+            "form_factor": "539g weight • 7.0mm slim • Aero Blue finish",
+            "stylus": "Universal Capacitive Stylus support",
+        },
+        "display": {
+            "Screen-to-Body Ratio": "84.0%",
+            "Peak Brightness": "500 nits",
+            "Color Gamut": "1 Billion Colors, 10-bit",
+            "Refresh Rate": "90 Hz",
+            "ProMotion 120Hz": False,
+            "True Tone": False,
+            "Anti-Reflective Coating": True,
+            "Fully Laminated": True,
+        },
+        "stylus": {
+            "Stylus Support": "Universal Stylus Support",
+            "Stylus Latency": "Standard",
+            "Palm Rejection": True,
+            "Hover Detection": False,
+            "Barrel Roll": False,
+            "Haptic Squeeze": False,
+        },
+        "cameras": {
+            "Rear Camera": "5 MP, 1080p video recording",
+            "Front Camera": "5 MP Front Camera for video calls",
+            "Video Recording": "1080p @ 30 fps",
+            "Center Stage": False,
+        },
+        "battery_charging": {
+            "Charging Wattage": "33W SUPERVOOC Fast Charging",
+            "Charge Time (0→100%)": "~1 hour 45 mins",
+            "Reverse Wired Charging": False,
+        },
+        "connectivity_extra": {
+            "Wi-Fi Standard": "Wi-Fi 5 (802.11ac dual-band)",
+            "Bluetooth": "5.4",
+            "USB": "USB-C",
+            "3.5mm Headphone Jack": False,
+            "MicroSD Expansion": False,
+        },
+        "software_security": {
+            "Operating System": "OxygenOS 15 (Android 15)",
+            "Biometric": "Face Unlock",
+            "Security Updates": "3 years guaranteed",
+        },
+        "sensors": {
+            "Accelerometer": True,
+            "Ambient Light": True,
+            "Hall Sensor": True,
+            "GPS": True,
+        },
+        "build": {
+            "Weight": "539 g",
+            "Thickness": "7.0 mm",
+            "Material": "Metal Unibody",
+            "IP Rating": "Not Rated",
+            "Landscape Stereo Speakers": True,
+        },
+        "rivals": [
+            {
+                "name": "Lenovo Idea Tab (11\")",
+                "img": "https://toptablets.in/wp-content/uploads/2026/10/lenovo-idea-tab.jpg",
+                "desc": "Helio G100 LTE vs Dimensity 6300 Bundled Pen",
+                "diffs": ["LTE Connectivity Included", "8GB RAM vs 6GB RAM", "9340mAh vs 7040mAh Battery", "No Bundled Stylus"],
+            },
+        ],
+    },
+    "OnePlus Pad Go 2": {
+        "colors": [("Shadow Black", "#2a2b2e")],
+        "storage_options": ["256 GB"],
+        "storage_badges": [("256 GB", "(Base)")],
+        "connectivity_options": ["Wi-Fi + 5G"],
+        "connectivity_badges": [
+            "Wi-Fi + 5G Cellular",
+        ],
+        "key_decision_specs": {
+            "chipset": "MediaTek Dimensity 7300-Ultra (4nm Octa-core, Mali-G615 GPU)",
+            "display": "12.1\" 2.8K ReadFit Display (2800 × 1980, 120Hz, 900 nits, Dolby Vision)",
+            "ram_storage": "8 GB LPDDR5X RAM • 256 GB UFS Storage",
+            "form_factor": "606g weight • 7:5 ReadFit productivity ratio",
+            "stylus": "OnePlus Stylo 2 Support (Ultra-low latency)",
+        },
+        "display": {
+            "Screen-to-Body Ratio": "88.4%",
+            "Peak Brightness": "900 nits (HBM)",
+            "Color Gamut": "Dolby Vision, 10-bit Color",
+            "Refresh Rate": "120 Hz",
+            "ProMotion 120Hz": True,
+            "True Tone": False,
+            "Anti-Reflective Coating": True,
+            "Fully Laminated": True,
+        },
+        "stylus": {
+            "Stylus Support": "OnePlus Stylo 2 (Notes app integration)",
+            "Stylus Latency": "~2 ms",
+            "Palm Rejection": True,
+            "Hover Detection": True,
+            "Barrel Roll": False,
+            "Haptic Squeeze": True,
+        },
+        "cameras": {
+            "Rear Camera": "8 MP with autofocus",
+            "Front Camera": "8 MP Ultra-Wide (Landscape Centered)",
+            "Video Recording": "1080p @ 30 fps",
+            "Center Stage": False,
+        },
+        "battery_charging": {
+            "Charging Wattage": "33W SUPERVOOC Fast Charging",
+            "Charge Time (0→100%)": "~1 hour 50 mins",
+            "Reverse Wired Charging": True,
+        },
+        "connectivity_extra": {
+            "Wi-Fi Standard": "Wi-Fi 6 (802.11ax)",
+            "Bluetooth": "5.4",
+            "USB": "USB-C (OTG)",
+            "3.5mm Headphone Jack": False,
+            "MicroSD Expansion": False,
+        },
+        "software_security": {
+            "Operating System": "OxygenOS 16 (Android) with OnePlus AI Suite",
+            "OnePlus AI": True,
+            "Biometric": "Face Unlock",
+            "Security Updates": "4 years guaranteed",
+        },
+        "sensors": {
+            "Accelerometer": True,
+            "Gyroscope": True,
+            "Ambient Light": True,
+            "Color Temperature": True,
+            "Hall Sensor": True,
+            "GPS": True,
+        },
+        "build": {
+            "Weight": "606 g",
+            "Thickness": "6.9 mm",
+            "Material": "Metal Unibody",
+            "IP Rating": "TÜV Rheinland Eye Care 4.0",
+            "Landscape Stereo Speakers": True,
+        },
+        "rivals": [
+            {
+                "name": "Xiaomi Pad 8",
+                "img": "https://toptablets.in/wp-content/uploads/2026/10/xiaomi-pad-8.jpg",
+                "desc": "12.1\" 7:5 ReadFit 5G vs 11.2\" 144Hz HyperOS",
+                "diffs": ["12.1\" vs 11.2\" Screen", "5G Cellular vs Wi-Fi Only", "10050mAh vs 8850mAh Battery", "Dolby Vision Display"],
+            },
+            {
+                "name": "Apple iPad 10th Gen",
+                "img": "https://toptablets.in/wp-content/uploads/2026/10/ipad-10th-gen.jpg",
+                "desc": "120Hz 2.8K 5G Android vs 60Hz iPadOS Classic",
+                "diffs": ["120Hz vs 60Hz Refresh", "256GB vs 64GB Storage", "5G Included vs Wi-Fi Only", "33W vs 20W Charging"],
+            },
+        ],
+    },
+    "OnePlus Pad 4": {
+        "colors": [("Sage Mist", "#98a89c")],
+        "storage_options": ["512 GB"],
+        "storage_badges": [("512 GB", "(Flagship)")],
+        "connectivity_options": ["Wi-Fi"],
+        "connectivity_badges": [
+            "Wi-Fi (Wi-Fi 7 802.11be Dual-band)",
+        ],
+        "key_decision_specs": {
+            "chipset": "Qualcomm Snapdragon 8 Elite (3nm, Oryon CPU, Adreno GPU)",
+            "display": "13.2\" 3.4K LCD (3392 × 2400, 144Hz, 900 nits, 7:5 ratio)",
+            "ram_storage": "12 GB LPDDR5X RAM • 512 GB UFS 4.0 Storage",
+            "form_factor": "656g weight • 6.0mm ultra-thin • Sage Mist Aluminum",
+            "stylus": "OnePlus Stylo 2 Support (Ultra-low latency with haptics)",
+        },
+        "display": {
+            "Screen-to-Body Ratio": "89.4%",
+            "Peak Brightness": "900 nits (HBM typical)",
+            "Color Gamut": "DCI-P3 100% Wide Color, 10-bit",
+            "Refresh Rate": "144 Hz",
+            "ProMotion 120Hz": True,
+            "True Tone": False,
+            "Anti-Reflective Coating": True,
+            "Fully Laminated": True,
+        },
+        "stylus": {
+            "Stylus Support": "OnePlus Stylo 2 Support",
+            "Stylus Latency": "~2 ms",
+            "Palm Rejection": True,
+            "Hover Detection": True,
+            "Barrel Roll": True,
+            "Haptic Squeeze": True,
+        },
+        "cameras": {
+            "Rear Camera": "13 MP with LED Flash, 4K video",
+            "Front Camera": "8 MP Ultra-Wide Center Stage camera",
+            "Video Recording": "4K @ 30 fps, 1080p @ 60 fps",
+            "Center Stage": True,
+        },
+        "battery_charging": {
+            "Charging Wattage": "80W SUPERVOOC Fast Charging",
+            "Charge Time (0→100%)": "~75 minutes (Huge 13,380mAh capacity)",
+            "Reverse Wired Charging": True,
+        },
+        "connectivity_extra": {
+            "Wi-Fi Standard": "Wi-Fi 7 (802.11be)",
+            "Bluetooth": "5.4",
+            "USB": "USB-C 3.2 Gen 1 (DisplayPort support)",
+            "3.5mm Headphone Jack": False,
+            "MicroSD Expansion": False,
+        },
+        "software_security": {
+            "Operating System": "OxygenOS 16 (Android 16)",
+            "Biometric": "Face Unlock",
+            "Security Updates": "4 years OS + 5 years security",
+        },
+        "sensors": {
+            "Accelerometer": True,
+            "Gyroscope": True,
+            "Ambient Light": True,
+            "Hall Sensor": True,
+            "Compass": True,
+        },
+        "build": {
+            "Weight": "656 g",
+            "Thickness": "6.0 mm",
+            "Material": "Aerospace-Grade Aluminum Unibody",
+            "IP Rating": "IP54 Splash Resistant",
+            "Landscape Stereo Speakers": True,
+        },
+        "rivals": [
+            {
+                "name": "Samsung Galaxy Tab S10+",
+                "img": "https://toptablets.in/wp-content/uploads/2026/10/samsung-galaxy-tab-s10.jpg",
+                "desc": "13.2\" 144Hz LCD vs 12.4\" 120Hz AMOLED",
+                "diffs": ["13.2\" vs 12.4\" Display", "Snapdragon 8 Elite vs Dimensity 9300+", "13380mAh vs 10090mAh Battery", "Bundled S-Pen vs Separate Stylo 2"],
+            },
+            {
+                "name": "Apple iPad Pro M4 (13\")",
+                "img": "https://toptablets.in/wp-content/uploads/2026/10/ipad-pro-m4.jpg",
+                "desc": "Snapdragon 8 Elite Flagship vs Apple M4 Silicon",
+                "diffs": ["Android Freedom vs iPadOS", "₹67.9K vs ₹129K Price", "13380mAh Massive Stamina", "Ultra-Large 7:5 Screen"],
+            },
+        ],
+    },
+    "Motorola Moto Pad 60 Neo": {
+        "colors": [("Pantone Bronze Green", "#4b5320")],
+        "storage_options": ["128 GB"],
+        "storage_badges": [("128 GB", "(Base)")],
+        "connectivity_options": ["Wi-Fi + 5G"],
+        "connectivity_badges": [
+            "Wi-Fi + 5G Cellular",
+        ],
+        "key_decision_specs": {
+            "chipset": "MediaTek Dimensity 6300 (6nm Octa-core, Mali-G57 MC2)",
+            "display": "11.0\" 2.5K IPS LCD (2560 × 1600, 90Hz, 16:10 ratio)",
+            "ram_storage": "4 GB LPDDR4X RAM • 128 GB UFS 2.2 (Up to 2TB MicroSD)",
+            "form_factor": "480g weight • 6.99mm ultra-slim metal build",
+            "stylus": "Bundled Moto Pen included in the box",
+        },
+        "display": {
+            "Screen-to-Body Ratio": "85.2%",
+            "Peak Brightness": "450 nits",
+            "Color Gamut": "Wide Color Gamut",
+            "Refresh Rate": "90 Hz",
+            "ProMotion 120Hz": False,
+            "True Tone": False,
+            "Anti-Reflective Coating": True,
+            "Fully Laminated": True,
+        },
+        "stylus": {
+            "Stylus Support": "Bundled Moto Pen Included in Box",
+            "Stylus Latency": "~15 ms",
+            "Palm Rejection": True,
+            "Hover Detection": True,
+            "Barrel Roll": False,
+            "Haptic Squeeze": False,
+        },
+        "cameras": {
+            "Rear Camera": "13 MP Main with LED flash",
+            "Front Camera": "8 MP Front Camera",
+            "Video Recording": "1080p @ 30 fps",
+            "Center Stage": False,
+        },
+        "battery_charging": {
+            "Charging Wattage": "20W TurboPower Fast Charging",
+            "Charge Time (0→100%)": "~2 hours",
+            "Reverse Wired Charging": False,
+        },
+        "connectivity_extra": {
+            "Wi-Fi Standard": "Wi-Fi 5 (802.11ac Dual-band)",
+            "Bluetooth": "5.2",
+            "USB": "USB-C 2.0",
+            "3.5mm Headphone Jack": True,
+            "MicroSD Expansion": True,
+        },
+        "software_security": {
+            "Operating System": "Android 15 (Clean Moto Experience)",
+            "Biometric": "Face Unlock",
+            "Security Updates": "3 years guaranteed",
+        },
+        "sensors": {
+            "Accelerometer": True,
+            "Ambient Light": True,
+            "Hall Sensor": True,
+            "GPS": True,
+        },
+        "build": {
+            "Weight": "480 g",
+            "Thickness": "6.99 mm",
+            "Material": "Metal Unibody with IP52 Dust & Water Resistance",
+            "IP Rating": "IP52",
+            "Landscape Stereo Speakers": True,
+        },
+        "rivals": [
+            {
+                "name": "Lenovo Idea Tab (11\")",
+                "img": "https://toptablets.in/wp-content/uploads/2026/10/lenovo-idea-tab.jpg",
+                "desc": "5G Moto Pad with Bundled Pen vs Wi-Fi Idea Tab",
+                "diffs": ["5G Cellular vs Wi-Fi Only", "Moto Pen Included", "IP52 Dust/Splash Resistance", "2.5K 90Hz Screen"],
+            },
+        ],
+    },
+    "HP Omnipad 12": {
+        "colors": [("Denim Blue", "#3b5998"), ("Mica Silver", "#c0c0c0")],
+        "storage_options": ["128 GB"],
+        "storage_badges": [("128 GB", "(Included)")],
+        "connectivity_options": ["Wi-Fi 6E"],
+        "connectivity_badges": ["Wi-Fi 6E (802.11ax Dual-Band)"],
+        "key_decision_specs": {
+            "chipset": "Qualcomm Snapdragon 7s Gen 2 (SM6475Q, 4nm)",
+            "display": "12.0\" 2K LCD (2000 × 1200, 90Hz, 400 nits, 16:10)",
+            "ram_storage": "8 GB LPDDR5 RAM • 128 GB UFS Storage",
+            "form_factor": "600g tablet • Detachable Keyboard Included",
+            "stylus": "10-Point Multi-touch & Stylus Compatible",
+        },
+        "display": {
+            "Screen-to-Body Ratio": "84.5%",
+            "Peak Brightness": "400 nits",
+            "Color Gamut": "85% NTSC Wide Color",
+            "Refresh Rate": "90 Hz",
+            "Anti-Reflective Coating": True,
+            "Fully Laminated": True,
+        },
+        "stylus": {
+            "Stylus Support": "Active & Capacitive Stylus Compatible",
+            "Keyboard Dock": "Full-size Detachable Magnetic POGO-Pin Keyboard Included",
+            "Palm Rejection": True,
+            "Multi-Touch": True,
+        },
+        "cameras": {
+            "Rear Camera": "13 MP with LED Flash, 1080p @ 30 fps",
+            "Front Camera": "8 MP Video Calling Camera, 1080p @ 30 fps",
+            "Video Recording": "1080p FHD @ 30 fps",
+        },
+        "battery_charging": {
+            "Charging Wattage": "33W Fast Charging (Type-C)",
+            "Charge Time (0→100%)": "~1.8 hours",
+            "Battery Stamina": "31 Wh (~8,200 mAh) • Up to 18 Hours",
+            "Reverse Wired Charging": False,
+        },
+        "connectivity_extra": {
+            "Wi-Fi Standard": "Wi-Fi 6E (802.11ax)",
+            "Bluetooth": "5.3",
+            "USB": "USB Type-C (Data & 33W Charging)",
+            "Audio": "DTS:X Ultra Quad Speakers • Dual High SNR Mics",
+            "3.5mm Headphone Jack": False,
+            "MicroSD Expansion": True,
+        },
+        "software_security": {
+            "Operating System": "Android 14",
+            "Productivity Suite": "HP Work & Entertainment Suite • Split Screen Multi-Window",
+            "Biometric": "Face Unlock & Security PIN",
+            "Security Updates": "3 Years Security Updates",
+        },
+        "sensors": {
+            "Accelerometer": True,
+            "Ambient Light": True,
+            "Hall Sensor": True,
+            "Gyroscope": True,
+        },
+        "build": {
+            "Weight": "600 g (Tablet alone)",
+            "Thickness": "7.0 mm",
+            "Material": "Anodized Aluminum Unibody with Magnetic Docking",
+            "Landscape Stereo Speakers": True,
+        },
+        "rivals": [
+            {
+                "name": "OnePlus Pad Go 2 (12.1\")",
+                "img": "https://toptablets.in/wp-content/uploads/2026/10/oneplus-pad-go-2.jpg",
+                "desc": "HP 2-in-1 with Detachable Keyboard vs OnePlus Pad Go 2",
+                "diffs": ["Bundled Detachable Keyboard Included", "12\" 2K 90Hz Display", "DTS:X Quad Speakers", "33W Fast Charger Included"],
+            },
+        ],
+    },
+    "Samsung Galaxy Tab A11+": {
+        "colors": [("Gray", "#6b7280"), ("Silver", "#e5e7eb"), ("Navy", "#1e3a8a")],
+        "storage_options": ["128 GB", "256 GB"],
+        "storage_badges": [("128 GB", "(Base)"), ("256 GB", None)],
+        "connectivity_options": ["Wi-Fi + 5G", "Wi-Fi Only"],
+        "connectivity_badges": ["Wi-Fi + 5G (Sub-6 GHz Nano-SIM)", "Wi-Fi (Dual-Band)"],
+        "key_decision_specs": {
+            "chipset": "MediaTek MT8755 (Octa-core, 6nm TSMC Architecture)",
+            "display": "11.0\" WUXGA LCD (1920 × 1200, 90Hz, 16:10)",
+            "ram_storage": "6 GB RAM • 128 GB Storage (MicroSD up to 2TB)",
+            "form_factor": "480g weight • 5G Cellular Connectivity",
+            "stylus": "Capacitive Stylus Compatible • Google Gemini AI Built-in",
+        },
+        "display": {
+            "Screen-to-Body Ratio": "81.0%",
+            "Peak Brightness": "480 nits",
+            "Color Gamut": "70% NTSC",
+            "Refresh Rate": "90 Hz",
+            "Anti-Reflective Coating": True,
+            "Fully Laminated": True,
+        },
+        "stylus": {
+            "Stylus Support": "Capacitive Stylus Compatible",
+            "Speakers": "Dolby Atmos Quad Speakers",
+            "Palm Rejection": True,
+        },
+        "cameras": {
+            "Rear Camera": "8 MP Autofocus (1080p @ 30 fps)",
+            "Front Camera": "5 MP Video Calling Camera",
+            "Video Recording": "1080p FHD @ 30 fps",
+        },
+        "battery_charging": {
+            "Charging Wattage": "15W Fast Charging (Type-C)",
+            "Charge Time (0→100%)": "~2.2 hours",
+            "Battery Stamina": "7,040 mAh (~14 hours video)",
+            "Reverse Wired Charging": False,
+        },
+        "connectivity_extra": {
+            "Wi-Fi Standard": "Wi-Fi 5 (802.11ac)",
+            "Bluetooth": "5.3",
+            "Cellular": "5G Sub-6 GHz Nano-SIM",
+            "USB": "USB Type-C 2.0",
+            "3.5mm Headphone Jack": True,
+            "MicroSD Expansion": True,
+        },
+        "software_security": {
+            "Operating System": "One UI 8.0 (Android 16)",
+            "AI Capabilities": "Google Gemini Live Camera & Screen Assistant",
+            "Biometric": "Face Unlock & PIN",
+            "Security Updates": "4 Years OS Upgrades & 5 Years Security Updates",
+        },
+        "sensors": {
+            "Accelerometer": True,
+            "Ambient Light": True,
+            "Hall Sensor": True,
+            "Gyroscope": True,
+        },
+        "build": {
+            "Weight": "480 g",
+            "Thickness": "6.9 mm",
+            "Material": "Sleek Aluminum Metal Unibody",
+            "Landscape Stereo Speakers": True,
+        },
+        "rivals": [
+            {
+                "name": "Motorola Moto Pad 60 Neo (11\")",
+                "img": "https://toptablets.in/wp-content/uploads/2026/10/moto-pad-60-neo.jpg",
+                "desc": "Samsung 5G Tab A11+ with One UI vs Moto Pad 60 Neo",
+                "diffs": ["Samsung One UI 4+5 Yrs Support vs Moto OS", "Quad Dolby Atmos Speakers Included", "Built-in 3.5mm Audio Jack", "Google Gemini Live AI"],
+            },
+        ],
+    },
 }
 
 
@@ -540,8 +1025,22 @@ def _get_model_key(specs: Dict[str, Any]) -> Optional[str]:
         return "Samsung Galaxy Tab S10+"
     if "10th" in model or "ipad 10" in model or "a14" in proc:
         return "Apple iPad 10th Gen"
-    if "pad 8" in model or "xiaomi" in model:
+    if "pad 8" in model:
         return "Xiaomi Pad 8"
+    if "pad 4" in model or "oneplus pad 4" in model:
+        return "OnePlus Pad 4"
+    if "pad go 2" in model or "dimensity 7300" in proc:
+        return "OnePlus Pad Go 2"
+    if "pad lite" in model or "g100" in proc:
+        return "OnePlus Pad Lite"
+    if "pad 60 neo" in model or "moto pad" in model or "60 neo" in model:
+        return "Motorola Moto Pad 60 Neo"
+    if "omnipad" in model or "omni pad" in model:
+        return "HP Omnipad 12"
+    if "a11" in model or "tab a11" in model:
+        return "Samsung Galaxy Tab A11+"
+    if "idea tab" in model or "ideatab" in model:
+        return "Lenovo Idea Tab"
     for key in TABLET_AUGMENTED_SPECS:
         if key.lower() in model or model in key.lower():
             return key
@@ -549,7 +1048,7 @@ def _get_model_key(specs: Dict[str, Any]) -> Optional[str]:
 
 
 def _get_benchmarks(processor: str) -> Optional[Dict[str, Any]]:
-    """Look up benchmark data for a known chipset."""
+    """Look up architecture and fabrication process node for a known chipset."""
     proc_lower = processor.lower()
     for chip, data in CHIPSET_BENCHMARKS.items():
         if chip.lower() in proc_lower or proc_lower in chip.lower():
@@ -641,13 +1140,11 @@ def render_live_deals_tracker(tablet: Dict[str, Any]) -> str:
 # ---------------------------------------------------------------------------
 
 def render_verdict_and_pros_cons(tablet: Dict[str, Any]) -> str:
-    """Render Two-Column The Verdict and Pros & Cons with benchmark meters."""
+    """Render Two-Column The Verdict and Pros & Cons."""
     specs = tablet.get("specs") or {}
     model = specs.get("model_name") or tablet.get("title", "iPad mini")
     rating = (tablet.get("amazon") or {}).get("rating") or (tablet.get("flipkart") or {}).get("rating") or 4.6
     score = round(float(rating) * 2, 1)
-    processor = specs.get("processor") or ""
-    benchmarks = _get_benchmarks(processor)
 
     # Dynamic pros & cons tailored to model
     if "mini" in model.lower():
@@ -698,6 +1195,20 @@ def render_verdict_and_pros_cons(tablet: Dict[str, Any]) -> str:
         summary = "An aggressively priced Android powerhouse packing flagship Snapdragon 8s Gen 4 performance, a razor-sharp 3.2K 144Hz screen, and huge 9200mAh stamina in an ultra-slim aluminum shell."
         audience = "Gamers, students, and entertainment enthusiasts seeking flagship-level speed, high-refresh visuals, and long battery life without flagship four-figure prices."
         buyers_take = "Delivers exceptional hardware value in the premium mid-tier segment, pairing a top-tier 144Hz screen with flagship Qualcomm silicon."
+    elif "pad 4" in model.lower() or "oneplus pad 4" in model.lower():
+        pros = [
+            "World-leading Qualcomm Snapdragon 8 Elite (3nm) with unbeatable desktop-grade processing",
+            "Expansive 13.2-inch 3.4K (3392×2400) 144Hz display with productive 7:5 aspect ratio",
+            "Monstrous 13,380mAh battery capacity paired with 80W SUPERVOOC fast charging",
+            "Immersive 8-speaker Hi-Fi sound system with quad woofers and spatial audio",
+        ]
+        cons = [
+            "Substantial 656g footprint best used on desks or with a stand",
+            "Wi-Fi only without physical SIM card slot",
+        ]
+        summary = "A colossal Android flagship tablet boasting Qualcomm's revolutionary Snapdragon 8 Elite, an expansive 13.2-inch 144Hz canvas, and a giant 13,380mAh battery."
+        audience = "Power multitaskers, digital artists, engineers, and mobile gamers demanding absolute peak performance and a massive display canvas."
+        buyers_take = "The reigning performance champion among Android tablets, offering uncompromising 3nm Snapdragon 8 Elite speed and immense battery stamina."
     elif "idea tab" in model.lower() or "lenovo" in model.lower():
         pros = [
             "Incredible value with bundled Lenovo Tab Pen included in the box",
@@ -712,6 +1223,34 @@ def render_verdict_and_pros_cons(tablet: Dict[str, Any]) -> str:
         summary = "An outstanding sub-₹20,000 package that includes an active stylus in the box, a sharp 2.5K 90Hz screen, and quad speakers for students and budget-conscious creators."
         audience = "Students, digital note-takers, and media consumers looking for an affordable all-in-one tablet that doesn't charge extra for a pen."
         buyers_take = "One of the best budget tablets on the market, offering unbeatable out-of-the-box utility with bundled stylus and 2.5K visuals."
+    elif "omnipad" in model.lower() or "hp" in model.lower():
+        pros = [
+            "Full-size magnetic detachable keyboard included right in the box",
+            "Crisp 12-inch 2K 90Hz display with 16:10 aspect ratio and 400 nits brightness",
+            "Immersive DTS:X Ultra quad speakers and dual high SNR microphone array",
+            "Massive 31Wh battery delivering up to 18 hours of endurance with 33W fast charging",
+        ]
+        cons = [
+            "Wi-Fi only without 5G/LTE SIM slot",
+            "Weighs 600g (without keyboard attachment)",
+        ]
+        summary = "A versatile 2-in-1 productivity tablet combining a vibrant 12-inch 2K 90Hz display, Qualcomm Snapdragon silicon, and a bundled detachable keyboard at a competitive sub-₹47K price point."
+        audience = "Students, remote professionals, and everyday creators seeking a complete laptop-replacement setup with bundled keyboard for drafting, video calls, and multimedia."
+        buyers_take = "One of the most practical 2-in-1 tablet bundles in its price bracket—getting a 12-inch 2K display and detachable keyboard out-of-the-box makes it a serious productivity contender."
+    elif "a11" in model.lower() or "tab a11" in model.lower():
+        pros = [
+            "Blazing 5G cellular connectivity in an affordable 11-inch Samsung slate",
+            "Smooth 90Hz WUXGA display paired with rich Dolby Atmos quad speakers",
+            "Generous 7,040mAh battery stamina and built-in 3.5mm headphone jack",
+            "Long-term Samsung One UI support with integrated Google Gemini AI",
+        ]
+        cons = [
+            "15W charging takes over 2 hours for a full cycle",
+            "S-Pen active stylus not included in the retail box",
+        ]
+        summary = "A versatile 11-inch 5G entertainment and productivity tablet delivering smooth 90Hz visuals, immersive Dolby Atmos quad sound, and long-term One UI software polish."
+        audience = "Students, commuters, and media consumers needing dependable 5G on-the-go connectivity, expandable microSD storage, and Samsung reliability without flagship prices."
+        buyers_take = "One of the most dependable 5G tablets under ₹30,000, combining smooth 90Hz visuals and quad speakers with Samsung's class-leading software support."
     else:
         pros = ["Excellent value-for-money ratio", "Crisp high-resolution display", "All-day battery stamina", "Clean OS experience"]
         cons = ["Base storage fills quickly", "Fast charger sold separately"]
@@ -728,46 +1267,6 @@ def render_verdict_and_pros_cons(tablet: Dict[str, Any]) -> str:
         f'<span style="color:#ef4444;font-weight:800;">✗</span> {c}</li>' for c in cons
     ])
 
-    # Benchmark mini-meters
-    bench_html = ""
-    if benchmarks:
-        gb_s = benchmarks.get("gb6_single", 0)
-        gb_m = benchmarks.get("gb6_multi", 0)
-        antutu = benchmarks.get("antutu", 0)
-        bench_html = f"""
-      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;margin-bottom:16px;">
-        <div style="font-size:0.72rem;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">BENCHMARK SCORES</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem;">
-            <span style="color:#334155;font-weight:600;">Geekbench 6 (Single)</span>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="width:100px;height:6px;background:#e2e8f0;border-radius:9999px;overflow:hidden;">
-                <div style="width:{min(gb_s / 4000 * 100, 100):.0f}%;height:100%;background:#3b82f6;border-radius:9999px;"></div>
-              </div>
-              <span style="font-weight:800;color:#0f172a;font-size:0.8rem;width:40px;text-align:right;">{gb_s:,}</span>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem;">
-            <span style="color:#334155;font-weight:600;">Geekbench 6 (Multi)</span>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="width:100px;height:6px;background:#e2e8f0;border-radius:9999px;overflow:hidden;">
-                <div style="width:{min(gb_m / 15000 * 100, 100):.0f}%;height:100%;background:#22c55e;border-radius:9999px;"></div>
-              </div>
-              <span style="font-weight:800;color:#0f172a;font-size:0.8rem;width:40px;text-align:right;">{gb_m:,}</span>
-            </div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem;">
-            <span style="color:#334155;font-weight:600;">AnTuTu v10</span>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="width:100px;height:6px;background:#e2e8f0;border-radius:9999px;overflow:hidden;">
-                <div style="width:{min(antutu / 2500000 * 100, 100):.0f}%;height:100%;background:#8b5cf6;border-radius:9999px;"></div>
-              </div>
-              <span style="font-weight:800;color:#0f172a;font-size:0.8rem;width:55px;text-align:right;">{antutu:,}</span>
-            </div>
-          </div>
-        </div>
-      </div>"""
-
     return f"""
 <div id="editor-verdict" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;margin:24px 0;align-items:start;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
   <!-- Left Column: The Verdict -->
@@ -783,7 +1282,6 @@ def render_verdict_and_pros_cons(tablet: Dict[str, Any]) -> str:
           <span style="font-size:0.65rem;font-weight:700;color:#64748b;">/10</span>
         </div>
       </div>
-      {bench_html}
       <p style="font-size:0.92rem;color:#475569;line-height:1.6;margin:0 0 14px 0;">{summary}</p>
       <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;font-size:0.85rem;color:#166534;line-height:1.5;margin-bottom:14px;">
         <b>🎯 Who Is This For?</b> {audience}
@@ -845,7 +1343,7 @@ def render_hardware_bento(specs: Dict[str, Any]) -> str:
     conn_info = conn_data.get("Wi-Fi Standard") or specs.get("connectivity") or "Wi-Fi"
 
     # Subtitles
-    proc_sub = f"{benchmarks.get('process', 'Flagship Architecture')} • Benchmark Verified" if benchmarks else "Flagship Multi-Core Architecture"
+    proc_sub = f"{benchmarks.get('process', 'Flagship Node')} Architecture" if benchmarks and benchmarks.get("process") else "Flagship Multi-Core Architecture"
     disp_sub = f"{disp_data.get('Refresh Rate', '120Hz')} • Anti-Reflective • HDR" if "amoled" in display_info.lower() else "True Tone • Wide Color"
     
     if sw_data.get("Apple Intelligence"):
@@ -1034,11 +1532,8 @@ def _build_enhanced_spec_categories(
         ("RAM", specs.get("ram") or full_specs.get("RAM", "8 GB")),
         ("Internal Storage", specs.get("storage") or full_specs.get("Internal Storage", "128 GB")),
     ]
-    if benchmarks:
-        perf_rows.append(("Fabrication Node", benchmarks.get("process", "TSMC Flagship Node")))
-        perf_rows.append(("Geekbench 6 (Single-Core)", f'{benchmarks["gb6_single"]:,}'))
-        perf_rows.append(("Geekbench 6 (Multi-Core)", f'{benchmarks["gb6_multi"]:,}'))
-        perf_rows.append(("AnTuTu v10 Benchmark", f'{benchmarks["antutu"]:,}'))
+    if benchmarks and benchmarks.get("process"):
+        perf_rows.append(("Fabrication Node", benchmarks.get("process")))
     sw_data = augmented.get("software_security", {})
     if sw_data.get("Galaxy AI") is not None:
         perf_rows.append(("Galaxy AI", _pill_html("Galaxy AI Suite", sw_data["Galaxy AI"])))
@@ -1199,9 +1694,6 @@ def render_enhanced_specs_table(full_specs: Dict[str, Any], specs: Dict[str, Any
     else:
         ram_html = f'<span class="tt-spec-v">{ram_val}</span>'
 
-    gb_multi = f"{benchmarks['gb6_multi']:,} points" if benchmarks else "7,379 points"
-    antutu_score = f"{benchmarks['antutu']:,} points" if benchmarks and benchmarks.get("antutu") else "1,650,000 points"
-
     os_val = sw_data.get("Operating System") or specs.get("operating_system") or "iPadOS 18"
     if sw_data.get("Security Updates"):
         os_display = f"{os_val} ({sw_data['Security Updates'].split('guaranteed')[0].strip()} updates)"
@@ -1245,8 +1737,6 @@ def render_enhanced_specs_table(full_specs: Dict[str, Any], specs: Dict[str, Any
         ("silicon", "Processor / SoC", f'<span style="font-weight:600; color:#0f172a;">{proc_display}</span>'),
         ("silicon", "Graphics / GPU", f'<span style="font-weight:600; color:#0f172a;">{gpu_display}</span>'),
         ("silicon", "System Memory / RAM", ram_html.replace('class="tt-spec-v tt-pos"', 'style="font-weight:600; color:#16a34a;"').replace('class="tt-spec-v"', 'style="font-weight:600; color:#0f172a;"')),
-        ("silicon", "Geekbench 6 Multi", f'<span style="font-weight:600; color:#0f172a;">{gb_multi}</span>'),
-        ("silicon", "AnTuTu v10 Total", f'<span style="font-weight:600; color:#0f172a;">{antutu_score}</span>'),
         ("silicon", "Operating Platform", f'<span style="font-weight:600; color:#0f172a;">{os_display}</span>'),
 
         # Battery & Ports (data-cat="battery")

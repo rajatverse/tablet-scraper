@@ -3,12 +3,12 @@ from typing import Dict, Any, Optional
 
 BRANDS = [
     "Apple", "Samsung", "Lenovo", "Xiaomi", "Redmi", "OnePlus",
-    "Realme", "Honor", "Google", "Motorola", "Nokia", "Acer", "Asus"
+    "Realme", "Honor", "Google", "Motorola", "Nokia", "Acer", "Asus", "HP"
 ]
 
 STORAGE_RE = re.compile(r"(\b(?:32|64|128|256|512)\s*(?:GB|gb)\b|\b1\s*(?:TB|tb)\b)", re.IGNORECASE)
-RAM_RE = re.compile(r"(\b(?:2|3|4|6|8|12|16)\s*(?:GB|gb)\s*(?:RAM)?\b)", re.IGNORECASE)
-SCREEN_RE = re.compile(r"(\b\d{1,2}(?:\.\d{1,2})?\s*(?:inch|inches|\"|cm)\b)", re.IGNORECASE)
+RAM_RE = re.compile(r"(\b(?:2|3|4|6|8|12|16)\s*,?\s*(?:GB|gb)\s*(?:RAM)?\b)", re.IGNORECASE)
+SCREEN_RE = re.compile(r"(\b\d{1,2}(?:\.\d{1,2})?\s*(?:inch|inches|\"|cm|centimetres|centimeters)\b)", re.IGNORECASE)
 CONNECTIVITY_RE = re.compile(r"(wi-?fi\s*\+\s*5g|wi-?fi\s*\+\s*4g|wi-?fi\s*\+\s*cellular|wi-?fi\s*only|cellular|wi-?fi|5g|lte)", re.IGNORECASE)
 
 def detect_brand(text: str) -> Optional[str]:
@@ -26,7 +26,7 @@ def normalize_storage(text: str) -> Optional[str]:
         return None
     m = STORAGE_RE.search(text)
     if m:
-        raw = m.group(1).upper().replace(" ", "")
+        raw = m.group(1).upper().replace(" ", "").replace(",", "")
         if "TB" in raw:
             return raw.replace("TB", " TB")
         return raw.replace("GB", " GB")
@@ -38,7 +38,7 @@ def normalize_ram(text: str) -> Optional[str]:
         return None
     m = RAM_RE.search(text)
     if m:
-        val = m.group(1).upper().replace("RAM", "").strip()
+        val = m.group(1).upper().replace("RAM", "").replace(",", "").strip()
         val = val.replace(" ", "")
         return val.replace("GB", " GB")
     return None
@@ -47,17 +47,24 @@ def normalize_screen_size(text: str) -> Optional[str]:
     """Extract screen size (e.g., '10.9 Inch')."""
     if not text:
         return None
-    # Look for e.g. 10.9 inch or 27.69 cm
+    # Look for e.g. 10.9 inch or 27.69 cm / 27.94 Centimetres
     m = re.search(r"(\d{1,2}(?:\.\d{1,2})?)\s*(?:inch|inches|\")", text, re.IGNORECASE)
     if m:
         return f"{m.group(1)} Inch"
     
-    # Check for cm conversion (e.g., 27.69 cm -> 10.9 inch)
-    m_cm = re.search(r"(\d{1,2}(?:\.\d{1,2})?)\s*cm", text, re.IGNORECASE)
+    # Check for cm/centimetres conversion (e.g., 27.94 Centimetres -> 11.0 inch)
+    m_cm = re.search(r"(\d{1,2}(?:\.\d{1,2})?)\s*(?:cm|centimetres|centimeters)\b", text, re.IGNORECASE)
     if m_cm:
         cm_val = float(m_cm.group(1))
         inches = round(cm_val / 2.54, 1)
         return f"{inches} Inch"
+
+    # Direct size number e.g. "12.1" or "11"
+    m_num = re.match(r"^(\d{1,2}(?:\.\d{1,2})?)$", str(text).strip())
+    if m_num:
+        val = float(m_num.group(1))
+        if 7.0 <= val <= 16.0:
+            return f"{val} Inch"
     return None
 
 def normalize_connectivity(text: str) -> str:
@@ -67,12 +74,12 @@ def normalize_connectivity(text: str) -> str:
     low = text.lower()
     if "wi-fi + 5g" in low or "wifi + 5g" in low or "cellular 5g" in low or "5g cellular" in low:
         return "Wi-Fi + 5G"
-    if "wi-fi + 4g" in low or "wifi + 4g" in low or "lte" in low or "cellular" in low:
+    if "wi-fi + 4g" in low or "wifi + 4g" in low or "lte" in low or "cellular" in low or "4g" in low:
         return "Wi-Fi + LTE"
     if "wi-fi only" in low or "wifi only" in low or "with wi-fi only" in low:
         return "Wi-Fi Only"
     if "5g" in low:
-        return "5G"
+        return "Wi-Fi + 5G"
     return "Wi-Fi"
 
 def clean_generation_text(text: str) -> str:
@@ -86,7 +93,8 @@ def clean_generation_text(text: str) -> str:
 
 def extract_model_series(title: str, brand: Optional[str], raw_model_name: Optional[str] = None) -> str:
     """Extract clean tablet series name, prioritizing structured model name."""
-    if raw_model_name and len(raw_model_name.strip()) > 2 and len(raw_model_name) < 40:
+    generic_models = {"tablet", "hp tablet", "android tablet", "smart tablet", "ipad", "pad"}
+    if raw_model_name and raw_model_name.strip().lower() not in generic_models and len(raw_model_name.strip()) > 2 and len(raw_model_name) < 40:
         cleaned_model = clean_generation_text(raw_model_name.strip())
         cleaned_model = re.sub(r"[\(\)\[\]]", " ", cleaned_model)
         cleaned_model = re.sub(r"\s+", " ", cleaned_model).strip()
@@ -107,9 +115,13 @@ def extract_model_series(title: str, brand: Optional[str], raw_model_name: Optio
     if galaxy_m:
         return f"Samsung {galaxy_m.group(0).strip()}"
 
-    pad_m = re.search(r"(?:oneplus|xiaomi|redmi|lenovo|realme)\s+pad\s+[a-z0-9\+\s]+?(?=\s*\(|\s*\d{1,2}(?:\.\d+)?\s*(?:inch|\"|cm)|,|\s*with|\s*64|\s*128|\s*256|$)", clean, re.IGNORECASE)
+    pad_m = re.search(r"(?:oneplus|xiaomi|redmi|lenovo|realme|hp)\s+(?:pad|omnipad|omni\s*pad)\s+[a-z0-9\+\s]+?(?=\s*\(|\s*\d{1,2}(?:\.\d+)?\s*(?:inch|\"|cm)|,|\s*with|\s*64|\s*128|\s*256|$)", clean, re.IGNORECASE)
     if pad_m:
         return pad_m.group(0).strip()
+
+    omni_m = re.search(r"(?:omnipad|omni\s*pad)\s+[a-z0-9\+\s]+?(?=\s*\(|\s*\d{1,2}(?:\.\d+)?\s*(?:inch|\"|cm)|,|\s*with|\s*64|\s*128|\s*256|$)", clean, re.IGNORECASE)
+    if omni_m:
+        return f"HP {omni_m.group(0).strip()}"
 
     # Remove storage, connectivity, screen size, color, accessories from title
     patterns_to_remove = [
@@ -164,30 +176,51 @@ def normalize_tablet_specs(title: str, specs_dict: Dict[str, Any], overview_dict
     ram = (
         normalize_ram(overview.get("RAM Memory Installed Size", "")) or
         normalize_ram(specs_dict.get("RAM", "")) or
+        normalize_ram(specs_dict.get("RAM Memory Installed", "")) or
+        normalize_ram(specs_dict.get("RAM Size", "")) or
+        normalize_ram(overview.get("RAM Size", "")) or
         normalize_ram(title)
     )
 
     screen = (
         normalize_screen_size(overview.get("Screen Size", "")) or
         normalize_screen_size(specs_dict.get("Display Size", "")) or
+        normalize_screen_size(specs_dict.get("Size", "")) or
+        normalize_screen_size(specs_dict.get("Screen Size Unit of Measure", "")) or
         normalize_screen_size(specs_dict.get("Standing screen display size", "")) or
         normalize_screen_size(title)
     )
 
-    connectivity = normalize_connectivity(
-        overview.get("Connectivity Technology", "") or
-        specs_dict.get("Connectivity", "") or
-        specs_dict.get("Internet Connectivity", "") or
-        title
-    )
+    conn_text = " ".join([
+        title,
+        overview.get("Connectivity Technology", ""),
+        specs_dict.get("Connectivity", ""),
+        specs_dict.get("Internet Connectivity", ""),
+        specs_dict.get("Network Connectivity Technology", ""),
+        specs_dict.get("Cellular Technology", ""),
+        specs_dict.get("Wireless Technology Type", ""),
+        specs_dict.get("Style Name", "")
+    ])
+    connectivity = normalize_connectivity(conn_text)
 
-    os_val = (
-        overview.get("Operating System") or
-        specs_dict.get("Operating Systems") or
-        specs_dict.get("Operating System") or
-        specs_dict.get("Operating System Family") or
-        ("iPadOS" if brand == "Apple" else "Android" if brand in ["Samsung", "Lenovo", "Xiaomi", "OnePlus", "Realme"] else None)
-    )
+    os_candidates = [
+        overview.get("Operating System"),
+        specs_dict.get("Operating Systems"),
+        specs_dict.get("Operating System"),
+        specs_dict.get("Operating System Family"),
+    ]
+    os_val = None
+    for cand in os_candidates:
+        if cand:
+            s_cand = str(cand).strip()
+            if s_cand.lower() not in ["ost", "other", "unknown", "n/a", "none"]:
+                os_val = s_cand
+                break
+    if not os_val or os_val.lower() == "ost":
+        if brand == "Apple":
+            os_val = "iPadOS"
+        elif brand in ["Samsung", "Lenovo", "Xiaomi", "OnePlus", "Realme", "Motorola", "HP"]:
+            os_val = "Android"
 
     processor = (
         overview.get("CPU Model") or
@@ -198,21 +231,51 @@ def normalize_tablet_specs(title: str, specs_dict: Dict[str, Any], overview_dict
         specs_dict.get("Processor Brand") or
         None
     )
-    if processor and "dimensity 9300" in processor.lower():
-        processor = "MediaTek Dimensity 9300+"
+    if processor:
+        proc_l = processor.lower()
+        if "dimensity 9300" in proc_l:
+            processor = "MediaTek Dimensity 9300+"
+        elif "dimensity 7300" in proc_l:
+            processor = "MediaTek Dimensity 7300-Ultra"
+        elif "dimensity 6300" in proc_l:
+            processor = "MediaTek Dimensity 6300"
+        elif "g100" in proc_l or "mtk g100" in proc_l:
+            processor = "MediaTek Helio G100"
+        elif "snapdragon 8s gen 4" in proc_l:
+            processor = "Snapdragon 8s Gen 4"
+        elif "snapdragon 8 gen 3" in proc_l:
+            processor = "Snapdragon 8 Gen 3"
+        elif "sm6475" in proc_l or "snapdragon 7s" in proc_l:
+            processor = "Qualcomm Snapdragon 7s Gen 2 (SM6475Q)"
 
     battery = (
         specs_dict.get("Battery Capacity") or
+        specs_dict.get("Battery Power") or
         specs_dict.get("Battery") or
         specs_dict.get("Average Battery Life (in hours)") or
         None
     )
     if battery:
         battery_str = str(battery).strip()
-        if battery_str.isdigit():
+        m_bat = re.search(r"(\d{3,5})", battery_str)
+        if m_bat and int(m_bat.group(1)) >= 1000:
+            battery = f"{int(m_bat.group(1)):,} mAh"
+        elif battery_str.isdigit():
             battery = f"{int(battery_str):,} mAh"
         elif not battery_str.lower().endswith("mah") and not battery_str.lower().endswith("hours") and re.match(r"^\d+$", battery_str):
             battery = f"{int(battery_str):,} mAh"
+    if not battery:
+        watt_hours = specs_dict.get("Lithium Battery Energy Content")
+        if watt_hours:
+            m_wh = re.search(r"(\d+(?:\.\d+)?)\s*(?:watt\s*hours|wh)", str(watt_hours), re.IGNORECASE)
+            if m_wh:
+                wh_val = float(m_wh.group(1))
+                mah_approx = int((wh_val / 3.8) * 1000)
+                battery = f"{int(wh_val)} Wh (~{mah_approx:,} mAh)"
+        if not battery and "hours battery" in title.lower():
+            m_hb = re.search(r"(?:upto|up\s*to)?\s*(\d{1,2})\s*hours\s*battery", title, re.IGNORECASE)
+            if m_hb:
+                battery = f"Up to {m_hb.group(1)} Hours"
 
     color = (
         overview.get("Colour") or
@@ -221,9 +284,11 @@ def normalize_tablet_specs(title: str, specs_dict: Dict[str, Any], overview_dict
         specs_dict.get("Color") or
         None
     )
+    if color:
+        color = re.sub(r"\s+\d+$", "", str(color)).strip()
     # Check title for specific finishes
-    color_m = re.search(r"\b(Platinum Silver|Moonstone Gray|Space Grey|Space Gray|Starlight|Midnight|Silver|Graphite|Rose Gold|Mint|Lavender)\b", title, re.IGNORECASE)
-    if color_m and (not color or color.lower() in ["silver", "gray", "grey", "black"]):
+    color_m = re.search(r"\b(Platinum Silver|Moonstone Gray|Space Grey|Space Gray|Starlight|Midnight|Silver|Graphite|Rose Gold|Mint|Lavender|Bronze Green|Aero Blue|Shadow Black)\b", title, re.IGNORECASE)
+    if color_m and (not color or color.lower() in ["silver", "gray", "grey", "black", "green", "blue"]):
         color = color_m.group(1).title()
 
     # Determine base display type from specs, overview, and title
